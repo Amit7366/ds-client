@@ -3,9 +3,10 @@
 import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/components/providers/AuthProvider';
-import { ApiClientError, dashboardPathForRole } from '@/lib/api';
+import { dashboardPathForRole, formatApiError } from '@/lib/api';
 import { Button } from '@/components/ui/Button';
 import { TextField } from '@/components/ui/Field';
+import { PasswordField } from '@/components/ui/PasswordField';
 
 export function LoginForm() {
   const { login, user, loading: authLoading } = useAuth();
@@ -16,7 +17,6 @@ export function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Already logged in → go to role dashboard (client-side fallback + soft navigations)
   useEffect(() => {
     if (authLoading) return;
     if (!user) return;
@@ -44,9 +44,7 @@ export function LoginForm() {
     try {
       await login(email.trim(), password);
     } catch (err) {
-      const message =
-        err instanceof ApiClientError ? err.message : 'Unable to sign in';
-      setError(message);
+      setError(formatApiError(err, 'Unable to sign in'));
     } finally {
       setLoading(false);
     }
@@ -77,10 +75,9 @@ export function LoginForm() {
         onChange={(e) => setEmail(e.target.value)}
         placeholder="you@company.com"
       />
-      <TextField
+      <PasswordField
         label="Password"
         name="password"
-        type="password"
         autoComplete="current-password"
         required
         value={password}
@@ -88,7 +85,10 @@ export function LoginForm() {
         placeholder="••••••••"
       />
       {error ? (
-        <div className="rounded-xl border border-[var(--danger)]/30 bg-[var(--danger-soft)] px-3 py-2 text-sm text-[var(--danger)]">
+        <div
+          className="rounded-xl border border-[var(--danger)]/30 bg-[var(--danger-soft)] px-3 py-2.5 text-sm text-[var(--danger)]"
+          role="alert"
+        >
           {error}
         </div>
       ) : null}

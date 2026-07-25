@@ -2,10 +2,11 @@
 
 import { FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { apiFetch, ApiClientError } from '@/lib/api';
+import { apiFetch, formatApiError } from '@/lib/api';
 import type { CreateUserPayload, ServiceType, User, UserStatus } from '@/lib/types';
 import { Button } from '@/components/ui/Button';
 import { TextField, SelectField } from '@/components/ui/Field';
+import { PasswordField } from '@/components/ui/PasswordField';
 import { useToast } from '@/components/providers/ToastProvider';
 import { IconCheck, IconCopy } from '@/components/ui/Icons';
 
@@ -63,7 +64,7 @@ export function CreateUserForm() {
         message: 'Copy the API secret and prefix now.',
       });
     } catch (err) {
-      const message = err instanceof ApiClientError ? err.message : 'Failed to create user';
+      const message = formatApiError(err, 'Failed to create user');
       setError(message);
       pushToast({ type: 'error', title: 'Create failed', message });
     } finally {
@@ -158,10 +159,10 @@ export function CreateUserForm() {
         value={form.phone}
         onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
       />
-      <TextField
+      <PasswordField
         label="Password"
         name="password"
-        type="password"
+        autoComplete="new-password"
         required
         value={form.password}
         onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
