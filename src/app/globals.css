@@ -1,0 +1,173 @@
+@import "tailwindcss";
+
+:root,
+[data-theme='light'] {
+  --bg: #f4f6f9;
+  --bg-subtle: #eef2f7;
+  --bg-elevated: #ffffff;
+  --bg-glass: rgba(255, 255, 255, 0.78);
+  --fg: #0b1220;
+  --fg-muted: #64748b;
+  --border: rgba(15, 23, 42, 0.08);
+  --border-strong: rgba(15, 23, 42, 0.14);
+  --accent: #0f766e;
+  --accent-hover: #0d9488;
+  --accent-soft: rgba(15, 118, 110, 0.12);
+  --accent-glow: rgba(45, 212, 191, 0.35);
+  --danger: #dc2626;
+  --danger-soft: rgba(220, 38, 38, 0.12);
+  --warning: #d97706;
+  --warning-soft: rgba(217, 119, 6, 0.14);
+  --success: #059669;
+  --success-soft: rgba(5, 150, 105, 0.12);
+  --sidebar: #07111f;
+  --sidebar-elevated: #0c1a2e;
+  --sidebar-fg: #e8eef8;
+  --sidebar-muted: #8ba0b8;
+  --ring: #14b8a6;
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.06);
+  --shadow-lg: 0 20px 50px rgba(15, 23, 42, 0.1);
+  --mesh-a: rgba(45, 212, 191, 0.18);
+  --mesh-b: rgba(56, 189, 248, 0.14);
+  --table-head: rgba(15, 23, 42, 0.03);
+  --code-bg: #0b1220;
+  --code-fg: #5eead4;
+}
+
+[data-theme='dark'] {
+  --bg: #070b14;
+  --bg-subtle: #0c1220;
+  --bg-elevated: #101826;
+  --bg-glass: rgba(16, 24, 38, 0.82);
+  --fg: #e8eef8;
+  --fg-muted: #8b9bb3;
+  --border: rgba(148, 163, 184, 0.12);
+  --border-strong: rgba(148, 163, 184, 0.22);
+  --accent: #2dd4bf;
+  --accent-hover: #5eead4;
+  --accent-soft: rgba(45, 212, 191, 0.14);
+  --accent-glow: rgba(45, 212, 191, 0.22);
+  --danger: #f87171;
+  --danger-soft: rgba(248, 113, 113, 0.14);
+  --warning: #fbbf24;
+  --warning-soft: rgba(251, 191, 36, 0.14);
+  --success: #34d399;
+  --success-soft: rgba(52, 211, 153, 0.14);
+  --sidebar: #050912;
+  --sidebar-elevated: #0a1220;
+  --sidebar-fg: #e8eef8;
+  --sidebar-muted: #7d91ab;
+  --ring: #2dd4bf;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.45);
+  --mesh-a: rgba(45, 212, 191, 0.1);
+  --mesh-b: rgba(56, 189, 248, 0.08);
+  --table-head: rgba(255, 255, 255, 0.03);
+  --code-bg: #020617;
+  --code-fg: #5eead4;
+}
+
+@theme inline {
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --color-background: var(--bg);
+  --color-foreground: var(--fg);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: light;
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+body {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  background:
+    radial-gradient(1100px 620px at 8% -12%, var(--mesh-a), transparent 55%),
+    radial-gradient(900px 520px at 100% 0%, var(--mesh-b), transparent 50%),
+    radial-gradient(700px 400px at 50% 100%, var(--accent-soft), transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
+  color: var(--fg);
+  min-height: 100vh;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+input,
+select,
+textarea,
+button {
+  font: inherit;
+}
+
+.surface-card {
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  border-radius: 1.1rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.surface-card-premium {
+  border: 1px solid var(--border);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--bg-elevated) 92%, white 8%),
+    var(--bg-elevated)
+  );
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow-md);
+}
+
+[data-theme='dark'] .surface-card-premium {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--bg-elevated) 90%, #2dd4bf 4%),
+    var(--bg-elevated)
+  );
+}
+
+.glass-panel {
+  border: 1px solid var(--border);
+  background: var(--bg-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: var(--shadow-md);
+}
+
+.page-enter {
+  animation: fade-up 0.35s ease-out;
+}
