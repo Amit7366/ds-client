@@ -2,9 +2,11 @@
 
 import { useState } from 'react';
 import { GameLaunchDocs } from './GameLaunchDocs';
+import { FetchingGameDocs } from './FetchingGameDocs';
 
 const APIS = [
   { id: 'game-launch', label: 'Game Launch', component: GameLaunchDocs },
+  { id: 'fetching-game', label: 'Fetching Game', component: FetchingGameDocs },
 ] as const;
 
 export function ApiDocsPage() {
