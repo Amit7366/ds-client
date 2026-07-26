@@ -39,43 +39,43 @@ const REQUEST_FIELDS: SchemaField[] = [
   {
     name: 'balance',
     type: 'NUMBER',
-    required: false,
+    required: true,
     description: 'Credit amount for the session. Maps to credit_amount. Default: 0.',
   },
   {
     name: 'currencyCode',
     type: 'STRING',
-    required: false,
+    required: true,
     description: 'Currency code. Maps to currency_code. Default: BDT.',
   },
   {
     name: 'language',
     type: 'STRING',
-    required: false,
+    required: true,
     description: 'UI language code. Default: en.',
   },
   {
     name: 'homeUrl',
     type: 'STRING',
-    required: false,
+    required: true,
     description: 'Return URL when the player exits. Maps to home_url. Default: http://localhost:3000.',
   },
   {
     name: 'platform',
     type: 'NUMBER',
-    required: false,
+    required: true,
     description: 'Platform identifier. Default: 1.',
   },
   {
     name: 'timestamp',
     type: 'STRING | NUMBER',
-    required: false,
+    required: true,
     description: 'Unix time in milliseconds (sent upstream as a string). Default: current time.',
   },
   {
     name: 'transfer_id',
     type: 'STRING',
-    required: false,
+    required: true,
     description: 'Unique transfer reference. Default: auto-generated tx_<random>.',
   },
 ];
@@ -254,20 +254,19 @@ export function GameLaunchDocs() {
         </div>
         <p className="mt-3 text-sm leading-relaxed text-[var(--fg-muted)]">
           Authenticate with your dashboard <strong className="text-[var(--fg)]">prefix</strong> and{' '}
-          <strong className="text-[var(--fg)]">apiSecret</strong>. After validation, the server maps
-          your body to the provider launch format and returns only the final session{' '}
+          <strong className="text-[var(--fg)]">apiSecret</strong>. After validation, the server returns the final session{' '}
           <code className="font-mono text-xs">payload</code>.
         </p>
         <ul className="mt-4 list-disc space-y-1 pl-5 text-sm text-[var(--fg-muted)]">
           <li>No JWT required — use body credentials for server-to-server calls.</li>
-          <li>
+          {/* <li>
             Field mapping: <code className="font-mono text-xs">playerId</code> →{' '}
             <code className="font-mono text-xs">member_account</code>,{' '}
             <code className="font-mono text-xs">gameCode</code> →{' '}
             <code className="font-mono text-xs">game_uid</code>,{' '}
             <code className="font-mono text-xs">balance</code> →{' '}
             <code className="font-mono text-xs">credit_amount</code>, etc.
-          </li>
+          </li> */}
           <li>Paused accounts receive HTTP 403; invalid credentials receive HTTP 401.</li>
         </ul>
       </section>
@@ -286,7 +285,7 @@ export function GameLaunchDocs() {
           <h3 className="text-xl font-semibold tracking-tight text-[var(--fg)]">Responses</h3>
           <p className="mt-1 text-sm text-[var(--fg-muted)]">
             On success, <code className="font-mono text-xs">data</code> is the provider{' '}
-            <code className="font-mono text-xs">payload</code> only (not step1/step2/step3).
+            <code className="font-mono text-xs">payload</code>.
           </p>
         </div>
         <div className="grid gap-4 md:grid-cols-2">

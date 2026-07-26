@@ -36,63 +36,73 @@ export function DashboardShell({
     };
   }, [mobileOpen]);
 
-  const navLinks = (
-    <nav className="flex flex-1 flex-col gap-1 p-3">
-      {nav.map((item) => {
-        const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={`group relative rounded-xl px-3.5 py-2.5 text-sm font-medium transition ${
-              active
-                ? 'bg-[var(--accent-soft)] text-[var(--accent)]'
-                : 'text-[var(--sidebar-muted)] hover:bg-white/5 hover:text-[var(--sidebar-fg)]'
-            }`}
-          >
-            {active ? (
-              <span className="absolute inset-y-2 left-1 w-1 rounded-full bg-[var(--accent)]" />
-            ) : null}
-            {item.label}
-          </Link>
-        );
-      })}
+  const sidebarHeader = (
+    <div className="shrink-0 border-b border-white/8 px-5 py-6">
+      <div className="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--accent-soft)] text-[var(--accent)]">
+        <span className="text-sm font-bold">UD</span>
+      </div>
+      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--sidebar-muted)]">
+        Console
+      </p>
+      <h1 className="mt-1 text-lg font-semibold tracking-tight text-[var(--sidebar-fg)]">
+        {title}
+      </h1>
+    </div>
+  );
+
+  const sidebarNav = (
+    <nav className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden p-3">
+      <div className="flex flex-col gap-1">
+        {nav.map((item) => {
+          const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`group relative rounded-xl px-3.5 py-2.5 text-sm font-medium transition ${
+                active
+                  ? 'bg-[var(--accent-soft)] text-[var(--accent)]'
+                  : 'text-[var(--sidebar-muted)] hover:bg-white/5 hover:text-[var(--sidebar-fg)]'
+              }`}
+            >
+              {active ? (
+                <span className="absolute inset-y-2 left-1 w-1 rounded-full bg-[var(--accent)]" />
+              ) : null}
+              {item.label}
+            </Link>
+          );
+        })}
+      </div>
     </nav>
+  );
+
+  const sidebarFooter = (
+    <div className="shrink-0 border-t border-white/8 p-4">
+      <div className="rounded-xl bg-white/5 p-3">
+        <p className="truncate text-sm font-medium text-[var(--sidebar-fg)]">{user?.name}</p>
+        <p className="mt-0.5 truncate text-xs text-[var(--sidebar-muted)]">{user?.email}</p>
+      </div>
+      <Button
+        variant="ghost"
+        className="mt-3 w-full !justify-start !text-[var(--sidebar-muted)] hover:!bg-white/8 hover:!text-[var(--sidebar-fg)]"
+        onClick={() => void logout()}
+      >
+        Sign out
+      </Button>
+    </div>
   );
 
   const sidebarBody = (
     <>
-      <div className="border-b border-white/8 px-5 py-6">
-        <div className="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--accent-soft)] text-[var(--accent)]">
-          <span className="text-sm font-bold">UD</span>
-        </div>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--sidebar-muted)]">
-          Console
-        </p>
-        <h1 className="mt-1 text-lg font-semibold tracking-tight text-[var(--sidebar-fg)]">
-          {title}
-        </h1>
-      </div>
-      {navLinks}
-      <div className="mt-auto border-t border-white/8 p-4">
-        <div className="rounded-xl bg-white/5 p-3">
-          <p className="truncate text-sm font-medium text-[var(--sidebar-fg)]">{user?.name}</p>
-          <p className="mt-0.5 truncate text-xs text-[var(--sidebar-muted)]">{user?.email}</p>
-        </div>
-        <Button
-          variant="ghost"
-          className="mt-3 w-full !justify-start !text-[var(--sidebar-muted)] hover:!bg-white/8 hover:!text-[var(--sidebar-fg)]"
-          onClick={() => void logout()}
-        >
-          Sign out
-        </Button>
-      </div>
+      {sidebarHeader}
+      {sidebarNav}
+      {sidebarFooter}
     </>
   );
 
   return (
     <div className="flex min-h-screen">
-      <aside className="hidden w-[270px] shrink-0 flex-col border-r border-white/5 bg-[var(--sidebar)] text-[var(--sidebar-fg)] md:flex">
+      <aside className="sticky top-0 hidden h-screen w-[270px] shrink-0 flex-col border-r border-white/5 bg-[var(--sidebar)] text-[var(--sidebar-fg)] md:flex">
         {sidebarBody}
       </aside>
 
@@ -104,8 +114,8 @@ export function DashboardShell({
             aria-label="Close menu"
             onClick={() => setMobileOpen(false)}
           />
-          <aside className="absolute inset-y-0 left-0 flex w-[min(86vw,300px)] flex-col bg-[var(--sidebar)] text-[var(--sidebar-fg)] shadow-[var(--shadow-lg)] animate-[fade-up_0.25s_ease-out]">
-            <div className="flex items-center justify-between px-4 pt-4">
+          <aside className="absolute inset-y-0 left-0 flex h-screen w-[min(86vw,300px)] flex-col bg-[var(--sidebar)] text-[var(--sidebar-fg)] shadow-[var(--shadow-lg)] animate-[fade-up_0.25s_ease-out]">
+            <div className="flex shrink-0 items-center justify-between px-4 pt-4">
               <p className="text-sm font-semibold">Menu</p>
               <button
                 type="button"
@@ -123,7 +133,7 @@ export function DashboardShell({
                 </svg>
               </button>
             </div>
-            {sidebarBody}
+            <div className="flex min-h-0 flex-1 flex-col">{sidebarBody}</div>
           </aside>
         </div>
       ) : null}
