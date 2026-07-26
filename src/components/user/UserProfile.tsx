@@ -164,6 +164,12 @@ export function UserProfile() {
           <CopyableDetail label="Phone" value={user.phone} showCopy={false} />
           <CopyableDetail label="Role" value={user.role} mono showCopy={false} />
           <CopyableDetail label="Prefix" value={user.prefix} mono showCopy={false} />
+          <CopyableDetail
+            label="GGR balance"
+            value={Number(user.ggrBalance ?? 0).toLocaleString()}
+            mono
+            showCopy={false}
+          />
           <div className="grid gap-2 px-4 py-4 sm:grid-cols-[160px_1fr] sm:items-center sm:px-5">
             <dt className="text-sm text-[var(--fg-muted)]">Status</dt>
             <dd>

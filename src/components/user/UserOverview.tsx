@@ -93,7 +93,7 @@ export function UserOverview() {
         </Link>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[
           {
             label: 'Status',
@@ -108,6 +108,14 @@ export function UserOverview() {
             body: (
               <p className="font-mono text-lg font-semibold tracking-wider text-[var(--fg)]">
                 {user.prefix}
+              </p>
+            ),
+          },
+          {
+            label: 'GGR balance',
+            body: (
+              <p className="font-mono text-lg font-semibold text-[var(--fg)]">
+                {Number(user.ggrBalance ?? 0).toLocaleString()}
               </p>
             ),
           },

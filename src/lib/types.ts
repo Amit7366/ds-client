@@ -11,6 +11,7 @@ export interface User {
   prefix: string;
   whitelistDomain: string;
   whitelistIp: string;
+  ggrBalance: number;
   status: UserStatus;
   serviceType: ServiceType;
   createdBy?: string | null;
@@ -53,6 +54,7 @@ export interface CreateUserPayload {
   password: string;
   whitelistDomain?: string;
   whitelistIp?: string;
+  ggrBalance?: number;
   status?: UserStatus;
   serviceType?: ServiceType;
   prefix?: string;
@@ -64,6 +66,7 @@ export interface UpdateUserPayload {
   password?: string;
   whitelistDomain?: string;
   whitelistIp?: string;
+  ggrBalance?: number;
   status?: UserStatus;
   serviceType?: ServiceType;
 }

@@ -41,6 +41,7 @@ export function UsersManager() {
     password: '',
     whitelistDomain: '',
     whitelistIp: '',
+    ggrBalance: '0',
     status: 'active' as User['status'],
     serviceType: 'staging' as User['serviceType'],
   });
@@ -99,6 +100,7 @@ export function UsersManager() {
       password: '',
       whitelistDomain: user.whitelistDomain || '',
       whitelistIp: user.whitelistIp || '',
+      ggrBalance: String(user.ggrBalance ?? 0),
       status: user.status,
       serviceType: user.serviceType,
     });
@@ -114,6 +116,7 @@ export function UsersManager() {
         phone: editForm.phone,
         whitelistDomain: editForm.whitelistDomain,
         whitelistIp: editForm.whitelistIp,
+        ggrBalance: Number(editForm.ggrBalance) || 0,
         status: editForm.status,
         serviceType: editForm.serviceType,
       };
@@ -260,6 +263,7 @@ export function UsersManager() {
                 <th className="px-4 py-3 font-medium">Prefix</th>
                 <th className="px-4 py-3 font-medium">API secret</th>
                 <th className="px-4 py-3 font-medium">Status</th>
+                <th className="px-4 py-3 font-medium">GGR</th>
                 <th className="px-4 py-3 font-medium">Service</th>
                 <th className="px-4 py-3 font-medium">Whitelist</th>
                 <th className="px-4 py-3 font-medium">Actions</th>
@@ -268,13 +272,13 @@ export function UsersManager() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center text-[var(--fg-muted)]">
+                  <td colSpan={8} className="px-4 py-8 text-center text-[var(--fg-muted)]">
                     Loading users…
                   </td>
                 </tr>
               ) : users.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center text-[var(--fg-muted)]">
+                  <td colSpan={8} className="px-4 py-8 text-center text-[var(--fg-muted)]">
                     No users yet. Create the first account.
                   </td>
                 </tr>
@@ -384,6 +388,9 @@ export function UsersManager() {
                       <td className="px-4 py-3">
                         <StatusBadge status={user.status} />
                       </td>
+                      <td className="px-4 py-3 font-mono text-sm text-[var(--fg)]">
+                        {Number(user.ggrBalance ?? 0).toLocaleString()}
+                      </td>
                       <td className="px-4 py-3">
                         <ServiceBadge serviceType={user.serviceType} />
                       </td>
@@ -453,6 +460,15 @@ export function UsersManager() {
                 value={editForm.whitelistIp}
                 onChange={(e) => setEditForm((f) => ({ ...f, whitelistIp: e.target.value }))}
                 placeholder="203.0.113.10"
+              />
+              <TextField
+                label="GGR balance"
+                name="ggrBalance"
+                type="number"
+                min={0}
+                step="any"
+                value={editForm.ggrBalance}
+                onChange={(e) => setEditForm((f) => ({ ...f, ggrBalance: e.target.value }))}
               />
               <SelectField
                 label="Status"

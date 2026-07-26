@@ -20,6 +20,7 @@ export function CreateUserForm() {
     password: '',
     whitelistDomain: '',
     whitelistIp: '',
+    ggrBalance: '0',
     status: 'active' as UserStatus,
     serviceType: 'staging' as ServiceType,
   });
@@ -48,7 +49,17 @@ export function CreateUserForm() {
     setError(null);
     setLoading(true);
     try {
-      const payload: CreateUserPayload = { ...form };
+      const payload: CreateUserPayload = {
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        password: form.password,
+        whitelistDomain: form.whitelistDomain,
+        whitelistIp: form.whitelistIp,
+        ggrBalance: Number(form.ggrBalance) || 0,
+        status: form.status,
+        serviceType: form.serviceType,
+      };
       const data = await apiFetch<{ user: User; apiSecret: string }>('/users', {
         method: 'POST',
         body: payload,
@@ -181,6 +192,16 @@ export function CreateUserForm() {
         value={form.whitelistIp}
         onChange={(e) => setForm((f) => ({ ...f, whitelistIp: e.target.value }))}
         placeholder="203.0.113.10"
+      />
+      <TextField
+        label="GGR balance"
+        name="ggrBalance"
+        type="number"
+        min={0}
+        step="any"
+        value={form.ggrBalance}
+        onChange={(e) => setForm((f) => ({ ...f, ggrBalance: e.target.value }))}
+        hint="Can be updated later from the users list"
       />
       <div className="grid gap-4 sm:grid-cols-2">
         <SelectField
