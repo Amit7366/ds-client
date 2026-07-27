@@ -12,7 +12,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md page-enter">
         <div className="mb-8 text-center">
           <div className="mx-auto mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--accent-soft)] text-[var(--accent)] shadow-[var(--shadow-sm)]">
-            <span className="text-sm font-bold tracking-wide">AV</span>
+            <span className="text-sm font-bold tracking-wide">ApiVexo</span>
           </div>
           
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[var(--fg)] sm:text-4xl">
