@@ -1,0 +1,26 @@
+services:
+  client:
+    container_name: apivexo-client
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_APP_NAME: ${NEXT_PUBLIC_APP_NAME:-Apivexo}
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-https://apivexo.com}
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3010:3000"
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      HOSTNAME: "0.0.0.0"
+      # Reach API container on shared Docker network (not via public DNS)
+      SERVER_URL: ${SERVER_URL:-http://apivexo-server:5001}
+    networks:
+      - apivexo-net
+
+networks:
+  apivexo-net:
+    external: true
