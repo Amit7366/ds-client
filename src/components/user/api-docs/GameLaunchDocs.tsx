@@ -40,7 +40,8 @@ const REQUEST_FIELDS: SchemaField[] = [
     name: 'balance',
     type: 'NUMBER',
     required: true,
-    description: 'Credit amount for the session. Maps to credit_amount. Default: 0.',
+    description:
+      'Credit amount for the session (maps to credit_amount). Must not exceed your account GGR balance. Default: 0.',
   },
   {
     name: 'currencyCode',
@@ -210,6 +211,16 @@ const ERRORS_CODE = `// 502 — Transfer order already exists
   }
 }
 
+// 400 — Balance exceeds GGR balance
+{
+  "success": false,
+  "message": "Balance exceeds available GGR balance",
+  "details": {
+    "balance": 500,
+    "ggrBalance": 100
+  }
+}
+
 // 400 — Validation failed
 {
   "success": false,
@@ -269,6 +280,10 @@ export function GameLaunchDocs() {
             <code className="font-mono text-xs">balance</code> →{' '}
             <code className="font-mono text-xs">credit_amount</code>, etc.
           </li> */}
+          <li>
+            <code className="font-mono text-xs">balance</code> cannot exceed your account GGR balance
+            (HTTP 400).
+          </li>
           <li>Paused accounts receive HTTP 403; invalid credentials receive HTTP 401.</li>
         </ul>
       </section>
