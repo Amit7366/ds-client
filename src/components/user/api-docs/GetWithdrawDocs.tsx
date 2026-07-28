@@ -15,7 +15,7 @@ const REQUEST_FIELDS: SchemaField[] = [
     type: 'STRING',
     required: true,
     description:
-      'Your API secret (encryption key) from the dashboard. Treat this like a password — never expose it in frontend code.',
+      'Your API secret from the dashboard. Treat this like a password — never expose it in frontend code.',
   },
   {
     name: 'prefix',
@@ -28,20 +28,13 @@ const REQUEST_FIELDS: SchemaField[] = [
     type: 'STRING',
     required: true,
     description:
-      'Player identifier on your platform. Sent upstream as member_account with provider code h037ad at the start and your account prefix at the end (e.g. player_1001 + prefix ABC12 → h037adplayer_1001ABC12).',
-  },
-  {
-    name: 'gameCode',
-    type: 'STRING',
-    required: true,
-    description: 'Game identifier. Sent upstream as game_uid.',
+      'Player identifier on your platform. Sent upstream as member_account with provider formatting applied server-side (same as Game Launch).',
   },
   {
     name: 'balance',
     type: 'NUMBER',
     required: true,
-    description:
-      'Credit amount for the session (maps to credit_amount). Must not exceed your account GGR balance. Default: 0.',
+    description: 'Credit amount for the withdraw request (maps to credit_amount). Default: 0.',
   },
   {
     name: 'currencyCode',
@@ -59,7 +52,7 @@ const REQUEST_FIELDS: SchemaField[] = [
     name: 'homeUrl',
     type: 'STRING',
     required: true,
-    description: 'Return URL when the player exits. Maps to home_url. Default: http://localhost:3000.',
+    description: 'Return / home URL. Maps to home_url. Default: http://localhost:3000.',
   },
   {
     name: 'platform',
@@ -78,8 +71,7 @@ const REQUEST_FIELDS: SchemaField[] = [
     name: 'transfer_id',
     type: 'STRING',
     required: true,
-    description:
-      'Unique transfer reference. Default: auto-generated tx_<random>. Reusing the same id returns error 10027.',
+    description: 'Unique transfer reference. Default: auto-generated tx_<random>.',
   },
 ];
 
@@ -91,15 +83,14 @@ function buildLanguages(endpointUrl: string): {
   const sampleBody = `{
     "apiSecret": "YOUR_API_SECRET",
     "prefix": "ABC12",
-    "gameCode": "sweet-bonanza",
     "playerId": "player_1001",
-    "balance": 100.5,
-    "currencyCode": "BDT",
+    "balance": 0,
+    "currencyCode": "INR",
     "language": "en",
     "homeUrl": "https://your-site.com/lobby",
-    "platform": 1,
-    "timestamp": 1710000000000,
-    "transfer_id": "tx_abc123"
+    "platform": 2,
+    "timestamp": "2026-07-28T17:40:00Z",
+    "transfer_id": "tx_withdraw001"
   }`;
 
   return [
@@ -119,28 +110,26 @@ function buildLanguages(endpointUrl: string): {
     "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    apiSecret: process.env.API_SECRET, // from your dashboard
+    apiSecret: process.env.API_SECRET,
     prefix: "ABC12",
-    gameCode: "sweet-bonanza",
     playerId: "player_1001",
-    balance: 100.5,
-    currencyCode: "BDT",
+    balance: 0,
+    currencyCode: "INR",
     language: "en",
     homeUrl: "https://your-site.com/lobby",
-    platform: 1,
-    timestamp: Date.now(),
-    transfer_id: "tx_abc123",
+    platform: 2,
+    timestamp: new Date().toISOString(),
+    transfer_id: "tx_withdraw001",
   }),
 });
 
 const data = await response.json();
 
 if (!data.success) {
-  throw new Error(data.message || "Game launch failed");
+  throw new Error(data.message || "Withdraw failed");
 }
 
-// Redirect the player to the launch URL
-window.location.href = data.data.game_launch_url;`,
+console.log(data.data.amount);`,
     },
     {
       id: 'nodejs',
@@ -148,15 +137,14 @@ window.location.href = data.data.game_launch_url;`,
       code: `const payload = {
   apiSecret: process.env.API_SECRET,
   prefix: "ABC12",
-  gameCode: "sweet-bonanza",
   playerId: "player_1001",
-  balance: 100.5,
-  currencyCode: "BDT",
+  balance: 0,
+  currencyCode: "INR",
   language: "en",
   homeUrl: "https://your-site.com/lobby",
-  platform: 1,
-  timestamp: Date.now(),
-  transfer_id: "tx_abc123",
+  platform: 2,
+  timestamp: new Date().toISOString(),
+  transfer_id: "tx_withdraw001",
 };
 
 const response = await fetch("${endpointUrl}", {
@@ -167,69 +155,39 @@ const response = await fetch("${endpointUrl}", {
 
 const data = await response.json();
 if (!response.ok || !data.success) {
-  throw new Error(data.message || "Game launch failed");
+  throw new Error(data.message || "Withdraw failed");
 }
 
-console.log(data.data.game_launch_url);`,
+console.log(data.data.amount);`,
     },
   ];
 }
 
 const SUCCESS_CODE = `{
   "success": true,
-  "message": "Game launch ready",
+  "message": "Withdraw successful",
   "data": {
-    "transaction_id": "75035507475ae21df91848d0c16e2bcf",
-    "transfer_amount": "100",
-    "game_launch_url": "https://jsgame.live/game/gamesUrl?id=67682958-f833-489f-bdcb-3b46fc18d304",
-    "before_amount": "0.0",
-    "currency": "INR",
-    "transfer_id": "tx_test004",
-    "transfer_status": 1,
-    "after_amount": "100.0",
-    "timestamp": 1785267789163
+    "amount": "100.0",
+    "status": true,
+    "message": "✅ Withdraw successful"
   }
 }`;
 
-const ERRORS_CODE = `// 502 — Transfer order already exists (reuse a new transfer_id)
+const ERRORS_CODE = `// 502 — Currency mismatch (must match Game Launch currency)
 {
   "success": false,
-  "message": "The transfer order already exists",
+  "message": "❌ Balance fetch failed",
   "details": {
-    "code": 10027,
-    "msg": "The transfer order already exists",
-    "payload": {
-      "currency": "INR",
-      "timestamp": 1785260928369,
-      "transfer_amount": "100",
-      "before_amount": "0.0",
-      "after_amount": "100.0",
-      "transfer_id": "tx_test003",
-      "transaction_id": "859176ebf6689d339b6f91018490d833",
-      "transfer_status": 1
-    }
+    "status": false,
+    "message": "❌ Balance fetch failed",
+    "error": "Player currencies do not match USD,Players cannot change the currency."
   }
 }
 
-// 502 — Game is not available
+// 502 — Nothing left to withdraw
 {
   "success": false,
-  "message": "Game is not available : …",
-  "details": {
-    "code": 10017,
-    "msg": "Game is not available : …",
-    "payload": ""
-  }
-}
-
-// 400 — Balance exceeds GGR balance
-{
-  "success": false,
-  "message": "Balance exceeds available GGR balance",
-  "details": {
-    "balance": 500,
-    "ggrBalance": 100
-  }
+  "message": "No balance to withdraw."
 }
 
 // 400 — Validation failed
@@ -237,7 +195,7 @@ const ERRORS_CODE = `// 502 — Transfer order already exists (reuse a new trans
   "success": false,
   "message": "Validation failed",
   "details": {
-    "gameCode": ["gameCode is required"]
+    "playerId": ["playerId is required"]
   }
 }
 
@@ -253,7 +211,7 @@ const ERRORS_CODE = `// 502 — Transfer order already exists (reuse a new trans
   "message": "Account is paused"
 }`;
 
-export function GameLaunchDocs() {
+export function GetWithdrawDocs() {
   const [origin, setOrigin] = useState(
     () => process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
   );
@@ -262,7 +220,7 @@ export function GameLaunchDocs() {
     setOrigin(getAppOrigin());
   }, []);
 
-  const endpointUrl = `${origin}/api/game/v1/gamelaunch`;
+  const endpointUrl = `${origin}/api/game/v1/getwithdraw`;
   const languages = useMemo(() => buildLanguages(endpointUrl), [endpointUrl]);
 
   return (
@@ -276,24 +234,20 @@ export function GameLaunchDocs() {
         </div>
         <p className="mt-3 text-sm leading-relaxed text-[var(--fg-muted)]">
           Authenticate with your dashboard <strong className="text-[var(--fg)]">prefix</strong> and{' '}
-          <strong className="text-[var(--fg)]">apiSecret</strong>. After validation, the server returns the final session{' '}
-          <code className="font-mono text-xs">payload</code>.
+          <strong className="text-[var(--fg)]">apiSecret</strong>. Pass a normal{' '}
+          <code className="font-mono text-xs">playerId</code> — member account formatting is applied
+          server-side (same as Game Launch). On success,{' '}
+          <code className="font-mono text-xs">data.amount</code> is the withdrawn amount.
         </p>
         <ul className="mt-4 list-disc space-y-1 pl-5 text-sm text-[var(--fg-muted)]">
           <li>No JWT required — use body credentials for server-to-server calls.</li>
-          {/* <li>
-            Field mapping: <code className="font-mono text-xs">playerId</code> →{' '}
-            <code className="font-mono text-xs">member_account</code> as{' '}
-            <code className="font-mono text-xs">h037ad</code> + playerId + your{' '}
-            <code className="font-mono text-xs">prefix</code>,{' '}
-            <code className="font-mono text-xs">gameCode</code> →{' '}
-            <code className="font-mono text-xs">game_uid</code>,{' '}
-            <code className="font-mono text-xs">balance</code> →{' '}
-            <code className="font-mono text-xs">credit_amount</code>, etc.
-          </li> */}
           <li>
-            <code className="font-mono text-xs">balance</code> cannot exceed your account GGR balance
-            (HTTP 400).
+            Use the <strong className="text-[var(--fg)]">same currency</strong> (and preferably
+            platform) as the Game Launch that funded the player. A mismatch returns provider error
+            like currency do not match.
+          </li>
+          <li>
+            Use a unique <code className="font-mono text-xs">transfer_id</code> per withdraw attempt.
           </li>
           <li>Paused accounts receive HTTP 403; invalid credentials receive HTTP 401.</li>
         </ul>
@@ -312,8 +266,8 @@ export function GameLaunchDocs() {
         <div>
           <h3 className="text-xl font-semibold tracking-tight text-[var(--fg)]">Responses</h3>
           <p className="mt-1 text-sm text-[var(--fg-muted)]">
-            On success, <code className="font-mono text-xs">data</code> is the provider{' '}
-            <code className="font-mono text-xs">payload</code>.
+            On success, <code className="font-mono text-xs">data</code> includes the withdrawn{' '}
+            <code className="font-mono text-xs">amount</code>.
           </p>
         </div>
         <div className="grid gap-4 md:grid-cols-2">
@@ -322,9 +276,7 @@ export function GameLaunchDocs() {
               200 Success
             </p>
             <p className="mt-2 text-sm text-[var(--fg-muted)]">
-              Redirect the player to{' '}
-              <code className="font-mono text-xs">data.game_launch_url</code>. Other fields include
-              balances, currency, and transfer status.
+              Read <code className="font-mono text-xs">data.amount</code> for the withdrawn balance.
             </p>
           </div>
           <div className="surface-card p-5">

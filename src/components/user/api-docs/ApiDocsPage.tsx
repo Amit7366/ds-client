@@ -2,10 +2,12 @@
 
 import { useState } from 'react';
 import { GameLaunchDocs } from './GameLaunchDocs';
+import { GetWithdrawDocs } from './GetWithdrawDocs';
 import { FetchingGameDocs } from './FetchingGameDocs';
 
 const APIS = [
   { id: 'game-launch', label: 'Game Launch', component: GameLaunchDocs },
+  { id: 'get-withdraw', label: 'Get Withdraw', component: GetWithdrawDocs },
   { id: 'fetching-game', label: 'Fetching Game', component: FetchingGameDocs },
 ] as const;
 

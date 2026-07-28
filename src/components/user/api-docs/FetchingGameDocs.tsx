@@ -42,7 +42,8 @@ const REQUEST_FIELDS: SchemaField[] = [
     name: 'member_account',
     type: 'STRING',
     required: false,
-    description: 'Optional filter for a single player member_account.',
+    description:
+      'Optional filter for a single player id (plain playerId, e.g. amt007). Provider prefixes are not required.',
   },
   {
     name: 'game_uid',
@@ -152,7 +153,7 @@ const SUCCESS_CODE = `{
         "serial_number": "96c9d590-2906-30eb-ba2d-99405702d5c7",
         "currency_code": "BDT",
         "game_uid": "1189baca156e1bbbecc3b26651a63565",
-        "member_account": "h037adplayer_1001ABC12",
+        "member_account": "player_1001",
         "bet_amount": "1.00",
         "win_amount": "0.00",
         "timestamp": "2026-07-26 19:41:08",
