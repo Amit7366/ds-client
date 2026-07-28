@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useCallback, useEffect, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { apiFetch, ApiClientError } from '@/lib/api';
 import type { Pagination, UpdateUserPayload, User } from '@/lib/types';
@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { TextField, SelectField } from '@/components/ui/Field';
 import { ServiceBadge, StatusBadge } from '@/components/ui/Badge';
 import { useToast } from '@/components/providers/ToastProvider';
+import { useVisibilityPolling } from '@/hooks/useVisibilityPolling';
 import {
   IconCopy,
   IconEye,
@@ -70,8 +71,9 @@ export function UsersManager() {
     }
   };
 
-  const loadUsers = useCallback(async (q = '') => {
-    setLoading(true);
+  const loadUsers = useCallback(async (q = '', options?: { silent?: boolean }) => {
+    const silent = options?.silent === true;
+    if (!silent) setLoading(true);
     try {
       const params = new URLSearchParams({ page: '1', limit: '50' });
       if (q) params.set('search', q);
@@ -81,16 +83,29 @@ export function UsersManager() {
       setUsers(data.items);
       setPagination(data.pagination);
     } catch (err) {
-      const message = err instanceof ApiClientError ? err.message : 'Failed to load users';
-      pushToast({ type: 'error', title: 'Load failed', message });
+      if (!silent) {
+        const message = err instanceof ApiClientError ? err.message : 'Failed to load users';
+        pushToast({ type: 'error', title: 'Load failed', message });
+      }
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   }, [pushToast]);
+
+  const searchRef = useRef(search);
+  searchRef.current = search;
+  const editingRef = useRef(editing);
+  editingRef.current = editing;
 
   useEffect(() => {
     void loadUsers();
   }, [loadUsers]);
+
+  // Refresh GGR column live without full-page reload / loading flash.
+  useVisibilityPolling(() => {
+    if (editingRef.current) return;
+    void loadUsers(searchRef.current, { silent: true });
+  }, 5000);
 
   function openEdit(user: User) {
     setEditing(user);

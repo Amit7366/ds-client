@@ -6,6 +6,7 @@ import type { User } from '@/lib/types';
 import { ServiceBadge, StatusBadge } from '@/components/ui/Badge';
 import { CopyableDetail } from '@/components/ui/CopyableDetail';
 import { useToast } from '@/components/providers/ToastProvider';
+import { useVisibilityPolling } from '@/hooks/useVisibilityPolling';
 import { IconEye, IconEyeOff, IconKey } from '@/components/ui/Icons';
 
 function formatDate(value?: string) {
@@ -37,6 +38,10 @@ export function UserProfile() {
   useEffect(() => {
     void loadProfile();
   }, [loadProfile]);
+
+  useVisibilityPolling(() => {
+    void loadProfile();
+  }, 5000);
 
   async function toggleRevealSecret() {
     if (apiSecret) {

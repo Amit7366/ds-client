@@ -8,6 +8,7 @@ import { ServiceBadge, StatusBadge } from '@/components/ui/Badge';
 import { CopyableDetail } from '@/components/ui/CopyableDetail';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useToast } from '@/components/providers/ToastProvider';
+import { useVisibilityPolling } from '@/hooks/useVisibilityPolling';
 import { IconEye, IconEyeOff, IconKey } from '@/components/ui/Icons';
 import { Button } from '@/components/ui/Button';
 
@@ -19,20 +20,27 @@ export function UserOverview() {
   const [apiSecret, setApiSecret] = useState<string | null>(null);
   const [revealing, setRevealing] = useState(false);
 
-  useEffect(() => {
-    void (async () => {
-      try {
-        const data = await apiFetch<{ user: User }>('/users/me/profile');
-        setUser(data.user);
-        setError(null);
-      } catch (err) {
-        if (authUser) setUser(authUser);
-        else {
-          setError(err instanceof ApiClientError ? err.message : 'Failed to load profile');
-        }
+  const loadProfile = useCallback(async () => {
+    try {
+      const data = await apiFetch<{ user: User }>('/users/me/profile');
+      setUser(data.user);
+      setError(null);
+    } catch (err) {
+      if (authUser) setUser(authUser);
+      else {
+        setError(err instanceof ApiClientError ? err.message : 'Failed to load profile');
       }
-    })();
+    }
   }, [authUser]);
+
+  useEffect(() => {
+    void loadProfile();
+  }, [loadProfile]);
+
+  // Keep GGR (and profile) fresh while the page is open — cron may reduce balance.
+  useVisibilityPolling(() => {
+    void loadProfile();
+  }, 5000);
 
   const toggleRevealSecret = useCallback(async () => {
     if (apiSecret) {
