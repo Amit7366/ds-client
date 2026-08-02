@@ -28,7 +28,7 @@ const REQUEST_FIELDS: SchemaField[] = [
     type: 'STRING',
     required: true,
     description:
-      'Player identifier on your platform. Sent upstream as member_account with provider code h037ad at the start and your account prefix at the end (e.g. player_1001 + prefix ABC12 → h037adplayer_1001ABC12).',
+      'Player identifier on your platform. Sent upstream as member_account with provider code h94044 at the start and your account prefix at the end (e.g. player_1001 + prefix ABC12 → h94044player_1001ABC12).',
   },
   {
     name: 'gameCode',
@@ -285,7 +285,7 @@ export function GameLaunchDocs() {
           {/* <li>
             Field mapping: <code className="font-mono text-xs">playerId</code> →{' '}
             <code className="font-mono text-xs">member_account</code> as{' '}
-            <code className="font-mono text-xs">h037ad</code> + playerId + your{' '}
+            <code className="font-mono text-xs">h94044</code> + playerId + your{' '}
             <code className="font-mono text-xs">prefix</code>,{' '}
             <code className="font-mono text-xs">gameCode</code> →{' '}
             <code className="font-mono text-xs">game_uid</code>,{' '}
