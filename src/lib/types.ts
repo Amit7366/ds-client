@@ -12,6 +12,7 @@ export interface User {
   whitelistDomain: string;
   whitelistIp: string;
   ggrBalance: number;
+  ggrDeductionPercent: number;
   status: UserStatus;
   serviceType: ServiceType;
   createdBy?: string | null;
@@ -55,6 +56,7 @@ export interface CreateUserPayload {
   whitelistDomain?: string;
   whitelistIp?: string;
   ggrBalance?: number;
+  ggrDeductionPercent?: number;
   status?: UserStatus;
   serviceType?: ServiceType;
   prefix?: string;
@@ -67,6 +69,30 @@ export interface UpdateUserPayload {
   whitelistDomain?: string;
   whitelistIp?: string;
   ggrBalance?: number;
+  ggrDeductionPercent?: number;
   status?: UserStatus;
   serviceType?: ServiceType;
+}
+
+export type TransactionResult = 'win' | 'loss';
+
+export interface UserTransactionItem {
+  id: string;
+  serial_number: string;
+  game_uid: string;
+  member_account: string;
+  bet_amount: number;
+  win_amount: number;
+  result: TransactionResult;
+  ggrDeduction: number;
+  currency_code: string;
+  timestamp: string;
+  game_round: string;
+}
+
+export interface UserTransactionsPayload {
+  currentGgrBalance: number;
+  ggrDeductionPercent: number;
+  items: UserTransactionItem[];
+  pagination: Pagination;
 }

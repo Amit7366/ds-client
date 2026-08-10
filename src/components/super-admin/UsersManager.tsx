@@ -43,6 +43,7 @@ export function UsersManager() {
     whitelistDomain: '',
     whitelistIp: '',
     ggrBalance: '0',
+    ggrDeductionPercent: '8',
     status: 'active' as User['status'],
     serviceType: 'staging' as User['serviceType'],
   });
@@ -116,6 +117,7 @@ export function UsersManager() {
       whitelistDomain: user.whitelistDomain || '',
       whitelistIp: user.whitelistIp || '',
       ggrBalance: String(user.ggrBalance ?? 0),
+      ggrDeductionPercent: String(user.ggrDeductionPercent ?? 8),
       status: user.status,
       serviceType: user.serviceType,
     });
@@ -132,6 +134,7 @@ export function UsersManager() {
         whitelistDomain: editForm.whitelistDomain,
         whitelistIp: editForm.whitelistIp,
         ggrBalance: Number(editForm.ggrBalance) || 0,
+        ggrDeductionPercent: Number(editForm.ggrDeductionPercent) || 0,
         status: editForm.status,
         serviceType: editForm.serviceType,
       };
@@ -404,7 +407,10 @@ export function UsersManager() {
                         <StatusBadge status={user.status} />
                       </td>
                       <td className="px-4 py-3 font-mono text-sm text-[var(--fg)]">
-                        {Number(user.ggrBalance ?? 0).toLocaleString()}
+                        <div>{Number(user.ggrBalance ?? 0).toLocaleString()}</div>
+                        <div className="text-xs text-[var(--fg-muted)]">
+                          {user.ggrDeductionPercent ?? 8}%
+                        </div>
                       </td>
                       <td className="px-4 py-3">
                         <ServiceBadge serviceType={user.serviceType} />
@@ -484,6 +490,19 @@ export function UsersManager() {
                 step="any"
                 value={editForm.ggrBalance}
                 onChange={(e) => setEditForm((f) => ({ ...f, ggrBalance: e.target.value }))}
+              />
+              <TextField
+                label="GGR deduction %"
+                name="ggrDeductionPercent"
+                type="number"
+                min={0}
+                max={100}
+                step={1}
+                value={editForm.ggrDeductionPercent}
+                onChange={(e) =>
+                  setEditForm((f) => ({ ...f, ggrDeductionPercent: e.target.value }))
+                }
+                hint="Integer 0–100. Applies to launch check and loss deductions."
               />
               <SelectField
                 label="Status"

@@ -21,6 +21,7 @@ export function CreateUserForm() {
     whitelistDomain: '',
     whitelistIp: '',
     ggrBalance: '0',
+    ggrDeductionPercent: '8',
     status: 'active' as UserStatus,
     serviceType: 'staging' as ServiceType,
   });
@@ -57,6 +58,7 @@ export function CreateUserForm() {
         whitelistDomain: form.whitelistDomain,
         whitelistIp: form.whitelistIp,
         ggrBalance: Number(form.ggrBalance) || 0,
+        ggrDeductionPercent: Number(form.ggrDeductionPercent) || 0,
         status: form.status,
         serviceType: form.serviceType,
       };
@@ -202,6 +204,17 @@ export function CreateUserForm() {
         value={form.ggrBalance}
         onChange={(e) => setForm((f) => ({ ...f, ggrBalance: e.target.value }))}
         hint="Can be updated later from the users list"
+      />
+      <TextField
+        label="GGR deduction %"
+        name="ggrDeductionPercent"
+        type="number"
+        min={0}
+        max={100}
+        step={1}
+        value={form.ggrDeductionPercent}
+        onChange={(e) => setForm((f) => ({ ...f, ggrDeductionPercent: e.target.value }))}
+        hint="Integer 0–100. Default 8. Used for launch check and loss deductions."
       />
       <div className="grid gap-4 sm:grid-cols-2">
         <SelectField
