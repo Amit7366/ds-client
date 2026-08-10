@@ -3,30 +3,39 @@
 import { InputHTMLAttributes, useState } from 'react';
 import { IconEye, IconEyeOff } from '@/components/ui/Icons';
 
-const inputClass =
-  'w-full rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] py-2.5 pl-3.5 pr-11 text-sm text-[var(--fg)] outline-none transition placeholder:text-[var(--fg-muted)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-soft)]';
-
 type Props = Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> & {
   label: string;
   error?: string;
   hint?: string;
 };
 
-export function PasswordField({ label, error, hint, id, name, ...props }: Props) {
+export function PasswordField({
+  label,
+  error,
+  hint,
+  id,
+  name,
+  placeholder,
+  className = '',
+  ...props
+}: Props) {
   const [visible, setVisible] = useState(false);
   const inputId = id || name;
 
   return (
-    <label className="block space-y-1.5" htmlFor={inputId}>
-      <span className="text-sm font-medium text-[var(--fg)]">{label}</span>
-      <div className="relative">
+    <div className="block space-y-1.5">
+      <div className="floating-field">
         <input
           id={inputId}
           name={name}
           type={visible ? 'text' : 'password'}
-          className={inputClass}
+          className={`floating-input floating-input-password peer ${className}`}
+          placeholder={placeholder || ' '}
           {...props}
         />
+        <label className="floating-label" htmlFor={inputId}>
+          {label}
+        </label>
         <button
           type="button"
           tabIndex={-1}
@@ -40,6 +49,6 @@ export function PasswordField({ label, error, hint, id, name, ...props }: Props)
       </div>
       {hint && !error ? <span className="text-xs text-[var(--fg-muted)]">{hint}</span> : null}
       {error ? <span className="text-xs text-[var(--danger)]">{error}</span> : null}
-    </label>
+    </div>
   );
 }

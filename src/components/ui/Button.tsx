@@ -26,11 +26,20 @@ export function Button({
 }: Props) {
   return (
     <button
-      className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)] disabled:cursor-not-allowed disabled:opacity-60 ${variants[variant]} ${className}`}
+      className={`btn-animated inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 ${variants[variant]} ${className}`}
       disabled={disabled || loading}
       {...props}
     >
-      {loading ? 'Please wait…' : children}
+      <span className="relative z-[1] inline-flex items-center justify-center gap-2">
+        {loading ? (
+          <>
+            <span className="btn-spinner" aria-hidden />
+            Please wait…
+          </>
+        ) : (
+          children
+        )}
+      </span>
     </button>
   );
 }
