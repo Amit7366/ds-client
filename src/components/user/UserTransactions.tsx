@@ -197,7 +197,7 @@ export function UserTransactions() {
                       {formatAmount(tx.ggrDeduction)}
                     </td>
                     <td className="px-4 py-3 text-[var(--fg-muted)]">
-                      {tx.currency_code || data.currency || 'BDT'}
+                      {data.currency || tx.currency_code || 'BDT'}
                     </td>
                   </tr>
                 ))
