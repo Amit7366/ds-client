@@ -3,7 +3,8 @@
 import { FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiFetch, formatApiError } from '@/lib/api';
-import type { CreateUserPayload, ServiceType, User, UserStatus } from '@/lib/types';
+import type { CreateUserPayload, ServiceType, User, UserCurrency, UserStatus } from '@/lib/types';
+import { USER_CURRENCIES } from '@/lib/types';
 import { Button } from '@/components/ui/Button';
 import { TextField, SelectField } from '@/components/ui/Field';
 import { PasswordField } from '@/components/ui/PasswordField';
@@ -22,6 +23,7 @@ export function CreateUserForm() {
     whitelistIp: '',
     ggrBalance: '0',
     ggrDeductionPercent: '8',
+    currency: 'BDT' as UserCurrency,
     status: 'active' as UserStatus,
     serviceType: 'staging' as ServiceType,
   });
@@ -59,6 +61,7 @@ export function CreateUserForm() {
         whitelistIp: form.whitelistIp,
         ggrBalance: Number(form.ggrBalance) || 0,
         ggrDeductionPercent: Number(form.ggrDeductionPercent) || 0,
+        currency: form.currency,
         status: form.status,
         serviceType: form.serviceType,
       };
@@ -216,6 +219,18 @@ export function CreateUserForm() {
         onChange={(e) => setForm((f) => ({ ...f, ggrDeductionPercent: e.target.value }))}
         hint="Integer 0–100. Default 8. Used for launch check and loss deductions."
       />
+      <SelectField
+        label="Currency"
+        name="currency"
+        value={form.currency}
+        onChange={(e) => setForm((f) => ({ ...f, currency: e.target.value as UserCurrency }))}
+      >
+        {USER_CURRENCIES.map((code) => (
+          <option key={code} value={code}>
+            {code}
+          </option>
+        ))}
+      </SelectField>
       <div className="grid gap-4 sm:grid-cols-2">
         <SelectField
           label="Status"

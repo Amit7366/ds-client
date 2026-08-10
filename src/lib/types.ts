@@ -1,6 +1,9 @@
 export type UserRole = 'super_admin' | 'user';
 export type UserStatus = 'active' | 'pause';
 export type ServiceType = 'staging' | 'live';
+export type UserCurrency = 'BDT' | 'INR' | 'USD' | 'EUR' | 'PHP';
+
+export const USER_CURRENCIES: UserCurrency[] = ['BDT', 'INR', 'USD', 'EUR', 'PHP'];
 
 export interface User {
   id: string;
@@ -13,6 +16,7 @@ export interface User {
   whitelistIp: string;
   ggrBalance: number;
   ggrDeductionPercent: number;
+  currency: UserCurrency;
   status: UserStatus;
   serviceType: ServiceType;
   createdBy?: string | null;
@@ -57,6 +61,7 @@ export interface CreateUserPayload {
   whitelistIp?: string;
   ggrBalance?: number;
   ggrDeductionPercent?: number;
+  currency?: UserCurrency;
   status?: UserStatus;
   serviceType?: ServiceType;
   prefix?: string;
@@ -70,6 +75,7 @@ export interface UpdateUserPayload {
   whitelistIp?: string;
   ggrBalance?: number;
   ggrDeductionPercent?: number;
+  currency?: UserCurrency;
   status?: UserStatus;
   serviceType?: ServiceType;
 }
@@ -93,6 +99,7 @@ export interface UserTransactionItem {
 export interface UserTransactionsPayload {
   currentGgrBalance: number;
   ggrDeductionPercent: number;
+  currency: UserCurrency;
   items: UserTransactionItem[];
   pagination: Pagination;
 }

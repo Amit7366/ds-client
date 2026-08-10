@@ -47,7 +47,8 @@ const REQUEST_FIELDS: SchemaField[] = [
     name: 'currencyCode',
     type: 'STRING',
     required: true,
-    description: 'Currency code. Maps to currency_code. Default: BDT.',
+    description:
+      'Currency code. Maps to currency_code. Overridden by your account currency (default BDT).',
   },
   {
     name: 'language',

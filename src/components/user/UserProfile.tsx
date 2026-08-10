@@ -175,6 +175,12 @@ export function UserProfile() {
             mono
             showCopy={false}
           />
+          <CopyableDetail
+            label="Currency"
+            value={user.currency ?? 'BDT'}
+            mono
+            showCopy={false}
+          />
           <div className="grid gap-2 px-4 py-4 sm:grid-cols-[160px_1fr] sm:items-center sm:px-5">
             <dt className="text-sm text-[var(--fg-muted)]">Status</dt>
             <dd>

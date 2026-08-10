@@ -3,7 +3,8 @@
 import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { apiFetch, ApiClientError } from '@/lib/api';
-import type { Pagination, UpdateUserPayload, User } from '@/lib/types';
+import type { Pagination, UpdateUserPayload, User, UserCurrency } from '@/lib/types';
+import { USER_CURRENCIES } from '@/lib/types';
 import { Button } from '@/components/ui/Button';
 import { TextField, SelectField } from '@/components/ui/Field';
 import { ServiceBadge, StatusBadge } from '@/components/ui/Badge';
@@ -44,6 +45,7 @@ export function UsersManager() {
     whitelistIp: '',
     ggrBalance: '0',
     ggrDeductionPercent: '8',
+    currency: 'BDT' as UserCurrency,
     status: 'active' as User['status'],
     serviceType: 'staging' as User['serviceType'],
   });
@@ -118,6 +120,7 @@ export function UsersManager() {
       whitelistIp: user.whitelistIp || '',
       ggrBalance: String(user.ggrBalance ?? 0),
       ggrDeductionPercent: String(user.ggrDeductionPercent ?? 8),
+      currency: (user.currency ?? 'BDT') as UserCurrency,
       status: user.status,
       serviceType: user.serviceType,
     });
@@ -135,6 +138,7 @@ export function UsersManager() {
         whitelistIp: editForm.whitelistIp,
         ggrBalance: Number(editForm.ggrBalance) || 0,
         ggrDeductionPercent: Number(editForm.ggrDeductionPercent) || 0,
+        currency: editForm.currency,
         status: editForm.status,
         serviceType: editForm.serviceType,
       };
@@ -282,6 +286,7 @@ export function UsersManager() {
                 <th className="px-4 py-3 font-medium">API secret</th>
                 <th className="px-4 py-3 font-medium">Status</th>
                 <th className="px-4 py-3 font-medium">GGR</th>
+                <th className="px-4 py-3 font-medium">Currency</th>
                 <th className="px-4 py-3 font-medium">Service</th>
                 <th className="px-4 py-3 font-medium">Whitelist</th>
                 <th className="px-4 py-3 font-medium">Actions</th>
@@ -290,13 +295,13 @@ export function UsersManager() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="px-4 py-8 text-center text-[var(--fg-muted)]">
+                  <td colSpan={9} className="px-4 py-8 text-center text-[var(--fg-muted)]">
                     Loading users…
                   </td>
                 </tr>
               ) : users.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-4 py-8 text-center text-[var(--fg-muted)]">
+                  <td colSpan={9} className="px-4 py-8 text-center text-[var(--fg-muted)]">
                     No users yet. Create the first account.
                   </td>
                 </tr>
@@ -412,6 +417,9 @@ export function UsersManager() {
                           {user.ggrDeductionPercent ?? 8}%
                         </div>
                       </td>
+                      <td className="px-4 py-3 font-mono text-sm text-[var(--fg)]">
+                        {user.currency ?? 'BDT'}
+                      </td>
                       <td className="px-4 py-3">
                         <ServiceBadge serviceType={user.serviceType} />
                       </td>
@@ -504,6 +512,23 @@ export function UsersManager() {
                 }
                 hint="Integer 0–100. Applies to launch check and loss deductions."
               />
+              <SelectField
+                label="Currency"
+                name="currency"
+                value={editForm.currency}
+                onChange={(e) =>
+                  setEditForm((f) => ({
+                    ...f,
+                    currency: e.target.value as UserCurrency,
+                  }))
+                }
+              >
+                {USER_CURRENCIES.map((code) => (
+                  <option key={code} value={code}>
+                    {code}
+                  </option>
+                ))}
+              </SelectField>
               <SelectField
                 label="Status"
                 name="status"

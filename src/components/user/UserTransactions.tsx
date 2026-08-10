@@ -82,7 +82,7 @@ export function UserTransactions() {
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-3">
         <div className="surface-card-premium p-5">
           <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--fg-muted)]">
             Current GGR balance
@@ -97,6 +97,14 @@ export function UserTransactions() {
           </p>
           <p className="mt-2 font-mono text-2xl font-semibold text-[var(--fg)]">
             {data ? `${data.ggrDeductionPercent}%` : '—'}
+          </p>
+        </div>
+        <div className="surface-card-premium p-5">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--fg-muted)]">
+            Currency
+          </p>
+          <p className="mt-2 font-mono text-2xl font-semibold text-[var(--fg)]">
+            {data ? data.currency ?? 'BDT' : '—'}
           </p>
         </div>
       </div>
@@ -188,7 +196,9 @@ export function UserTransactions() {
                     <td className="px-4 py-3 font-mono text-[var(--fg)]">
                       {formatAmount(tx.ggrDeduction)}
                     </td>
-                    <td className="px-4 py-3 text-[var(--fg-muted)]">{tx.currency_code}</td>
+                    <td className="px-4 py-3 text-[var(--fg-muted)]">
+                      {tx.currency_code || data.currency || 'BDT'}
+                    </td>
                   </tr>
                 ))
               )}

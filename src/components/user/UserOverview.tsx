@@ -101,7 +101,7 @@ export function UserOverview() {
         </Link>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {[
           {
             label: 'Status',
@@ -124,6 +124,14 @@ export function UserOverview() {
             body: (
               <p className="font-mono text-lg font-semibold text-[var(--fg)]">
                 {Number(user.ggrBalance ?? 0).toLocaleString()}
+              </p>
+            ),
+          },
+          {
+            label: 'Currency',
+            body: (
+              <p className="font-mono text-lg font-semibold text-[var(--fg)]">
+                {user.currency ?? 'BDT'}
               </p>
             ),
           },
