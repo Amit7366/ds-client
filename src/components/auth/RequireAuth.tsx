@@ -16,12 +16,12 @@ type Props = {
  * this blocks unauthorized UI navigation and redirects on session loss.
  */
 export function RequireAuth({ allowedRoles, children }: Props) {
-  const { user, loading, logout } = useAuth();
+  const { user, loading, loggingOut } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    if (loading) return;
+    if (loading || loggingOut) return;
 
     if (!user) {
       const next = encodeURIComponent(pathname || '/');
@@ -32,7 +32,7 @@ export function RequireAuth({ allowedRoles, children }: Props) {
     if (!allowedRoles.includes(user.role)) {
       router.replace(dashboardPathForRole(user.role));
     }
-  }, [user, loading, allowedRoles, router, pathname, logout]);
+  }, [user, loading, loggingOut, allowedRoles, router, pathname]);
 
   if (loading) {
     return (

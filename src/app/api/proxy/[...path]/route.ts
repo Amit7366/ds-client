@@ -102,8 +102,9 @@ async function proxyRequest(req: NextRequest, pathSegments: string[]) {
     extractCookieValue(joined, 'refreshToken');
 
   const isLogout = path === 'auth/logout' || path.endsWith('/logout');
+  const isChangePassword = path === 'auth/change-password';
 
-  if (isLogout) {
+  if (isLogout || (isChangePassword && upstream.status === 200)) {
     clearAuthCookies(response);
     return response;
   }

@@ -30,6 +30,9 @@ export function LoginForm() {
     if (reason === 'expired') {
       return 'Your session expired after 2 hours. Please sign in again.';
     }
+    if (reason === 'password') {
+      return 'Your password was updated. Please sign in with your new password.';
+    }
     if (reason === 'invalid') {
       return 'Your session was invalid. Please sign in again.';
     }

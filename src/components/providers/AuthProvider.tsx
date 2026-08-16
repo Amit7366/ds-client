@@ -22,8 +22,9 @@ import type { AuthPayload, User } from '@/lib/types';
 type AuthContextValue = {
   user: User | null;
   loading: boolean;
+  loggingOut: boolean;
   login: (email: string, password: string) => Promise<User>;
-  logout: (reason?: 'manual' | 'expired') => Promise<void>;
+  logout: (reason?: 'manual' | 'expired' | 'password') => Promise<void>;
   refreshUser: () => Promise<void>;
   setUser: (user: User | null) => void;
 };
@@ -55,6 +56,7 @@ export function AuthProvider({
   const pathname = usePathname();
   const [user, setUser] = useState<User | null>(initialUser);
   const [loading, setLoading] = useState(!initialUser);
+  const [loggingOut, setLoggingOut] = useState(false);
   const expiryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const loggingOutRef = useRef(false);
 
@@ -66,9 +68,10 @@ export function AuthProvider({
   }, []);
 
   const logout = useCallback(
-    async (reason: 'manual' | 'expired' = 'manual') => {
+    async (reason: 'manual' | 'expired' | 'password' = 'manual') => {
       if (loggingOutRef.current) return;
       loggingOutRef.current = true;
+      setLoggingOut(true);
       clearExpiryTimer();
       try {
         await apiFetch('/auth/logout', { method: 'POST', skipAuthRedirect: true });
@@ -78,7 +81,12 @@ export function AuthProvider({
       setUser(null);
       setClientRoleCookie(null);
       clearClientAuthCookies();
-      const query = reason === 'expired' ? '?reason=expired' : '';
+      const query =
+        reason === 'expired'
+          ? '?reason=expired'
+          : reason === 'password'
+            ? '?reason=password'
+            : '';
       router.replace(`/login${query}`);
       router.refresh();
       loggingOutRef.current = false;
@@ -175,8 +183,8 @@ export function AuthProvider({
   );
 
   const value = useMemo(
-    () => ({ user, loading, login, logout, refreshUser, setUser }),
-    [user, loading, login, logout, refreshUser],
+    () => ({ user, loading, loggingOut, login, logout, refreshUser, setUser }),
+    [user, loading, loggingOut, login, logout, refreshUser],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

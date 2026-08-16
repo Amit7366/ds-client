@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import Link from 'next/link';
 import { apiFetch, ApiClientError } from '@/lib/api';
 import type { User } from '@/lib/types';
 import { ServiceBadge, StatusBadge } from '@/components/ui/Badge';
@@ -93,7 +94,11 @@ export function UserProfile() {
           Profile & credentials
         </h2>
         <p className="mt-1 text-sm text-[var(--fg-muted)]">
-          API credentials can be revealed and copied. Account details are read-only.
+          API credentials can be revealed and copied. Account details are read-only.{' '}
+          <Link href="/user/settings" className="font-medium text-[var(--accent)] hover:underline">
+            Change password in Settings
+          </Link>
+          .
         </p>
       </div>
 
