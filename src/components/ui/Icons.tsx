@@ -139,3 +139,43 @@ export function IconKey({ className = 'h-4 w-4' }: IconProps) {
     </svg>
   );
 }
+
+export function IconDetails({ className = 'h-4 w-4' }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden>
+      <rect x="4" y="5" width="16" height="14" rx="2.2" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M8 9.5h8M8 12.5h6M8 15.5h4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function IconPencil({ className = 'h-4 w-4' }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path
+        d="M4 20l4.2-1.1 10.4-10.4a1.6 1.6 0 0 0 0-2.3L16.8 4.4a1.6 1.6 0 0 0-2.3 0L4.1 15.8 4 20z"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinejoin="round"
+      />
+      <path d="M13.2 6.2l4.6 4.6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function IconPause({ className = 'h-4 w-4' }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <rect x="7" y="5" width="3.4" height="14" rx="1.1" />
+      <rect x="13.6" y="5" width="3.4" height="14" rx="1.1" />
+    </svg>
+  );
+}
+
+export function IconPlay({ className = 'h-4 w-4' }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M8.2 5.6v12.8L19 12 8.2 5.6z" />
+    </svg>
+  );
+}

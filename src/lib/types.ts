@@ -103,3 +103,18 @@ export interface UserTransactionsPayload {
   items: UserTransactionItem[];
   pagination: Pagination;
 }
+
+export interface UserBettingStats {
+  totalBetAmount: number;
+  totalWin: number;
+  totalLoss: number;
+  totalGgrDeduction: number;
+  transactionCount: number;
+  winCount: number;
+  lossCount: number;
+}
+
+export interface UserDetailsPayload {
+  user: User;
+  stats: UserBettingStats;
+}

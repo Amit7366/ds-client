@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { FormEvent, type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { apiFetch, ApiClientError } from '@/lib/api';
 import type { Pagination, UpdateUserPayload, User, UserCurrency } from '@/lib/types';
@@ -17,13 +17,55 @@ import {
   IconKey,
   IconRefresh,
   IconCheck,
+  IconDetails,
+  IconPencil,
+  IconPause,
+  IconPlay,
 } from '@/components/ui/Icons';
+import { UserDetailsModal } from '@/components/super-admin/UserDetailsModal';
 
 type SecretModalState = {
   user: User;
   apiSecret: string;
   mode: 'reveal' | 'regenerate';
 } | null;
+
+type TableActionTone = 'accent' | 'neutral' | 'warning' | 'success';
+
+const tableActionTones: Record<TableActionTone, string> = {
+  accent:
+    'text-[var(--accent)] bg-[var(--accent-soft)] border-transparent hover:border-[color-mix(in_srgb,var(--accent)_35%,transparent)] hover:bg-[var(--accent)] hover:text-white hover:shadow-[0_8px_18px_var(--accent-glow)]',
+  neutral:
+    'text-[var(--fg)] bg-[var(--bg-elevated)] border-[var(--border)] hover:border-[var(--border-strong)] hover:bg-[var(--bg)] hover:shadow-[var(--shadow-sm)]',
+  warning:
+    'text-[var(--warning)] bg-[var(--warning-soft)] border-transparent hover:border-[color-mix(in_srgb,var(--warning)_35%,transparent)] hover:bg-[var(--warning)] hover:text-white hover:shadow-[0_8px_18px_color-mix(in_srgb,var(--warning)_28%,transparent)]',
+  success:
+    'text-[var(--success)] bg-[var(--success-soft)] border-transparent hover:border-[color-mix(in_srgb,var(--success)_35%,transparent)] hover:bg-[var(--success)] hover:text-white hover:shadow-[0_8px_18px_color-mix(in_srgb,var(--success)_28%,transparent)]',
+};
+
+function TableAction({
+  label,
+  icon,
+  tone,
+  onClick,
+}: {
+  label: string;
+  icon: ReactNode;
+  tone: TableActionTone;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      title={label}
+      onClick={onClick}
+      className={`btn-animated inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-[11px] font-semibold tracking-wide whitespace-nowrap ${tableActionTones[tone]}`}
+    >
+      {icon}
+      {label}
+    </button>
+  );
+}
 
 export function UsersManager() {
   const { pushToast } = useToast();
@@ -32,6 +74,7 @@ export function UsersManager() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<User | null>(null);
+  const [detailsUserId, setDetailsUserId] = useState<string | null>(null);
   const [secretModal, setSecretModal] = useState<SecretModalState>(null);
   const [confirmRegen, setConfirmRegen] = useState<User | null>(null);
   const [revealed, setRevealed] = useState<Record<string, string>>({});
@@ -99,6 +142,8 @@ export function UsersManager() {
   searchRef.current = search;
   const editingRef = useRef(editing);
   editingRef.current = editing;
+  const detailsUserIdRef = useRef(detailsUserId);
+  detailsUserIdRef.current = detailsUserId;
 
   useEffect(() => {
     void loadUsers();
@@ -106,7 +151,7 @@ export function UsersManager() {
 
   // Refresh GGR column live without full-page reload / loading flash.
   useVisibilityPolling(() => {
-    if (editingRef.current) return;
+    if (editingRef.current || detailsUserIdRef.current) return;
     void loadUsers(searchRef.current, { silent: true });
   }, 5000);
 
@@ -321,9 +366,17 @@ export function UsersManager() {
                       className="border-b border-[var(--border)] align-top last:border-0"
                     >
                       <td className="px-4 py-3">
-                        <div className="font-medium text-[var(--fg)]">{user.name}</div>
-                        <div className="text-xs text-[var(--fg-muted)]">{user.email}</div>
-                        <div className="text-xs text-[var(--fg-muted)]">{user.phone}</div>
+                        <button
+                          type="button"
+                          onClick={() => setDetailsUserId(user.id)}
+                          className="text-left"
+                        >
+                          <div className="font-medium text-[var(--fg)] underline-offset-2 hover:text-[var(--accent)] hover:underline">
+                            {user.name}
+                          </div>
+                          <div className="text-xs text-[var(--fg-muted)]">{user.email}</div>
+                          <div className="text-xs text-[var(--fg-muted)]">{user.phone}</div>
+                        </button>
                       </td>
 
                       <td className="px-4 py-3">
@@ -428,13 +481,34 @@ export function UsersManager() {
                         <div>{user.whitelistIp || '—'}</div>
                       </td>
                       <td className="px-4 py-3">
-                        <div className="flex flex-wrap gap-2">
-                          <Button variant="secondary" onClick={() => openEdit(user)}>
-                            Edit
-                          </Button>
-                          <Button variant="secondary" onClick={() => void toggleStatus(user)}>
-                            {user.status === 'active' ? 'Pause' : 'Activate'}
-                          </Button>
+                        <div className="inline-flex items-center gap-1 rounded-xl border border-[var(--border)] bg-[var(--bg-subtle)]/80 p-1 shadow-[var(--shadow-sm)]">
+                          <TableAction
+                            label="Details"
+                            tone="accent"
+                            icon={<IconDetails className="h-3.5 w-3.5" />}
+                            onClick={() => setDetailsUserId(user.id)}
+                          />
+                          <TableAction
+                            label="Edit"
+                            tone="neutral"
+                            icon={<IconPencil className="h-3.5 w-3.5" />}
+                            onClick={() => openEdit(user)}
+                          />
+                          {user.status === 'active' ? (
+                            <TableAction
+                              label="Pause"
+                              tone="warning"
+                              icon={<IconPause className="h-3.5 w-3.5" />}
+                              onClick={() => void toggleStatus(user)}
+                            />
+                          ) : (
+                            <TableAction
+                              label="Activate"
+                              tone="success"
+                              icon={<IconPlay className="h-3.5 w-3.5" />}
+                              onClick={() => void toggleStatus(user)}
+                            />
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -445,6 +519,10 @@ export function UsersManager() {
           </table>
         </div>
       </div>
+
+      {detailsUserId ? (
+        <UserDetailsModal userId={detailsUserId} onClose={() => setDetailsUserId(null)} />
+      ) : null}
 
       {editing ? (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 p-4">
