@@ -38,6 +38,30 @@ export function TextField({
   );
 }
 
+export function DateTimeField({
+  label,
+  error,
+  hint,
+  id,
+  className = '',
+  ...props
+}: FieldProps & InputHTMLAttributes<HTMLInputElement>) {
+  const inputId = id || props.name;
+  return (
+    <label className="block space-y-1.5" htmlFor={inputId}>
+      <span className="text-sm font-medium text-[var(--fg)]">{label}</span>
+      <input
+        id={inputId}
+        type="datetime-local"
+        className={`${fieldClass} [color-scheme:inherit] ${className}`}
+        {...props}
+      />
+      {hint && !error ? <span className="text-xs text-[var(--fg-muted)]">{hint}</span> : null}
+      {error ? <span className="text-xs text-[var(--danger)]">{error}</span> : null}
+    </label>
+  );
+}
+
 export function SelectField({
   label,
   error,

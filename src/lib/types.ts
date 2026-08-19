@@ -96,14 +96,6 @@ export interface UserTransactionItem {
   game_round: string;
 }
 
-export interface UserTransactionsPayload {
-  currentGgrBalance: number;
-  ggrDeductionPercent: number;
-  currency: UserCurrency;
-  items: UserTransactionItem[];
-  pagination: Pagination;
-}
-
 export interface UserBettingStats {
   totalBetAmount: number;
   totalWin: number;
@@ -112,6 +104,15 @@ export interface UserBettingStats {
   transactionCount: number;
   winCount: number;
   lossCount: number;
+}
+
+export interface UserTransactionsPayload {
+  currentGgrBalance: number;
+  ggrDeductionPercent: number;
+  currency: UserCurrency;
+  items: UserTransactionItem[];
+  pagination: Pagination;
+  stats: UserBettingStats;
 }
 
 export interface UserDetailsPayload {
